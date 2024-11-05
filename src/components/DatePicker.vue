@@ -5,9 +5,10 @@
       type="text"
       v-model="formattedDate"
       @focus="toggleCalendar(true)"
-      @input="updateDate"
+      @input="handleInput"
       placeholder="__.__.____ г"
       class="date-input"
+      maxlength="10"
     />
     </div>
     <div v-if="isCalendarVisible" class="calendar">
@@ -79,11 +80,8 @@ const selectedYear = ref<number>(new Date().getFullYear());
 const selectedMonth = ref<number>(new Date().getMonth());
 const selectedDay = ref<number | null>(null);
 const isCalendarVisible = ref<boolean>(false);
-
-// NEW
 const isMonthDropdownVisible = ref<boolean>(false);
 const isYearDropdownVisible = ref<boolean>(false);
-// END NEW
 
 const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -93,7 +91,6 @@ const daysInMonth = computed(() => {
   return Array.from({ length: days }, (_, i) => i + 1);
 });
 
-// NEW
 const prevMonthDays = computed(() => {
   const firstDayOfMonth = new Date(selectedYear.value, selectedMonth.value, 1).getDay();
   const prevMonthDate = new Date(selectedYear.value, selectedMonth.value, 0).getDate();
@@ -105,7 +102,6 @@ const nextMonthDays = computed(() => {
   const remainingDays = 42 - daysInCurrentMonth - prevMonthDays.value.length;
   return Array.from({ length: remainingDays }, (_, i) => i + 1);
 });
-// END NEW
 
 const formattedDate = computed({
   get: () => {  
@@ -126,7 +122,6 @@ const toggleCalendar = (visible: boolean) => {
   isCalendarVisible.value = visible;
 };
 
-// NEW
 const toggleMonthDropdown = () => {
   isMonthDropdownVisible.value = !isMonthDropdownVisible.value;
   isYearDropdownVisible.value = false;
@@ -150,7 +145,6 @@ const selectYear = (year: number) => {
     isYearDropdownVisible.value = false;
   })
 };
-// END NEW
 
 const selectDay = (day: number) => {
   selectedDay.value = day;
@@ -183,9 +177,22 @@ const nextYear = () => {
   selectedYear.value += 1;
 };
 
+
 const updateDate = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  formattedDate.value = input.value;
+  const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
+  if (datePattern.test(input.value)) {
+    formattedDate.value = input.value;
+  } else {
+    input.value = '';
+  }
+};
+
+const handleInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.value.length === 10) {
+    updateDate(event);
+  }
 };
 
 const isToday = (day: number) => {
@@ -214,6 +221,7 @@ const isWeekendNextMonth = (day: number) => {
 </script>
 
 <style lang="scss" scoped>
+
 $date-picker-border: #dcdcdcb0;
 $selected-day-bg: #5a64f0;
 $today-bg: #a2c8ff;
@@ -222,7 +230,7 @@ $font-color: #333;
 
 .date-picker {
   position: relative;
-  width: 230px;
+  width: 200px;
   height: 30px;
   font-family: sans-serif;
   margin: 17px;
@@ -313,7 +321,6 @@ $font-color: #333;
           }
         }
       }
- 
     }
 
     .day-names {
