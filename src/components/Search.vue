@@ -1,5 +1,5 @@
 <template>
-  <h1>Search</h1>
+  <h1>Поиск</h1>
   <div class="search-container">
     <input
       required 

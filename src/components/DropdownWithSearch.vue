@@ -1,5 +1,5 @@
 <template>
-  <h1>DropdownWithSearch</h1>
+  <h1>Dropdown с поиском</h1>
   <div class="search-container">
     <input
       required 
