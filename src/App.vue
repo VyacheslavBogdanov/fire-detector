@@ -3,6 +3,7 @@
     <DatePicker />
     <Search />
     <DropdownWithSearch />
+    <!-- <CheckboxFilter /> -->
   </div>
 </template>
 
@@ -11,6 +12,7 @@
 import DatePicker from './components/DatePicker.vue';
 import Search from './components/Search.vue';
 import DropdownWithSearch from './components/DropdownWithSearch.vue';
+import CheckboxFilter from './components/CheckboxFilter.vue';
 
 </script>
 

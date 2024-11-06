@@ -5,7 +5,7 @@
       type="text"
       v-model="formattedDate"
       @focus="toggleCalendar(true)"
-      @input="handleInput"
+      @input="updateDate"
       placeholder="__.__.____ г"
       class="date-input"
       maxlength="10"
@@ -110,7 +110,7 @@ const formattedDate = computed({
   },
   set: (value: string) => {
     const [day, month, year] = value.split('.').map(Number);
-    if (day && month && year) {
+    if (day && month && year >= 1000 && year <= 9999) {
       selectedDay.value = day;
       selectedMonth.value = month - 1;
       selectedYear.value = year;
@@ -180,20 +180,20 @@ const nextYear = () => {
 
 const updateDate = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
-  if (datePattern.test(input.value)) {
-    formattedDate.value = input.value;
-  } else {
-    input.value = '';
+  // const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
+  formattedDate.value = input.value;
+  console.log('input.value', typeof input.value);
+  
+ 
   }
-};
+// };
 
-const handleInput = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (input.value.length === 10) {
-    updateDate(event);
-  }
-};
+// const handleInput = (event: Event) => {
+//   const input = event.target as HTMLInputElement;
+//   if (input.value.length === 10) {
+//     updateDate(event);
+//   }
+// };
 
 const isToday = (day: number) => {
   const today = new Date();
