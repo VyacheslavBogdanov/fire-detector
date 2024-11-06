@@ -1,7 +1,9 @@
 <template>
   <h1>Checkbox</h1>
   <div class="filter-container">
-    <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
+    
+    <!-- <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label> -->
+    
     <input
       readonly
       type="text"
@@ -9,11 +11,10 @@
       @focus="isDropdownVisible = true"
       @blur="handleBlur"
       :class="{'filter-input': true, 'has-dropdown': isDropdownVisible }"
-      :disabled="noResultsFound"
+      
     />
-    <div v-if="isDropdownVisible" class="iconPositionTop">⌃</div>
-    <div v-else class="iconPositionDown">⌃</div>
-
+    
+    <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown' : !isDropdownVisible }">⌃</div> 
     <div v-if="isDropdownVisible" class="dropdown">
       <div class="search-wrapper" v-if="showSearch">
         <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" />
@@ -21,7 +22,7 @@
       </div>
 
       <ul class="dropdown-list">
-        <li>
+        <li v-if="itemsToDisplay.length > 0">
           <label>
             <input type="checkbox" v-model="selectAll" @change="handleSelectAll">
             <span>Все</span>
@@ -35,6 +36,7 @@
           </label>
         </li>
       </ul>
+    
 
       <div v-if="noResultsFound" class="no-results">Результаты не найдены</div>
     </div>
@@ -60,17 +62,25 @@ export default defineComponent({
     const searchQuery = ref<string>('');
     const selectAll = ref<boolean>(false);
     const checkedItems = ref<string[]>([]);
-    const items = ref<string[]>(Array(11).fill('hello')); // Заполните массив вашими данными.
+    const items = ref<string[]>([
+  "Смирнов А.В.", "Иванов Д.С.", "Кузнецов Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
+  "Новиков А.Д.", "Морозов С.А.", "Петров Е.В.", "Васильев А.С.", "Соколов В.И.", "Михайлов О.В.",
+  "Фёдоров Д.Л.", "Орлов И.К.", "Волков А.А.", "Андреев П.С.", "Никитин О.В.", "Захаров А.И.", "Куликов Д.П.",
+  "Александров С.В.", "Дмитриев В.Н.", "Ковалёв Е.М.", "Ситников Л.П.", "Григорьев В.Д.", "Гордеев А.С.", "Антонов И.Н.",
+  "Ефимов В.П.", "Тимофеев Д.В.", "Филиппов Е.С.", "Макаров О.А.", "Сидоров В.Д.", "Чернов И.П.", "Савельев Н.В.", "Павлов А.С.",
+  "Богданов С.К.", "Мартынов Е.В.", "Воробьёв А.М.", "Антипов Д.А.", "Тарасов В.О.", "Беляев Л.В.", "Комаров И.С.", "Мельников Е.К.",
+  "Шевченко С.В.", "Емельянов О.П.", "Князев В.А.", "Белов Е.И.", "Щербаков С.Д.", "Назаров Д.В.", "Кочетов О.С.", "Афанасьев Н.А."
+]);
     const noResultsFound = ref<boolean>(false); 
 
-    const filteredList = ref<string[]>(items.value); // Изначально равен всем элементам
+    const filteredList = ref<string[]>(items.value); 
 
     const updateFilteredList = debounce(() => {
       filteredList.value = items.value.filter(item =>
         item.toLowerCase().startsWith(searchQuery.value.toLowerCase())
       );
 
-      noResultsFound.value = filteredList.value.length === 0; // Устанавливаем, если ничего не найдено
+      noResultsFound.value = filteredList.value.length === 0; 
     }, 700);
 
     watch(searchQuery, () => {
@@ -97,249 +107,237 @@ export default defineComponent({
       }
 
       isDropdownVisible.value = false;
+
     };
 
-    const handleSelectAll = () => {
-      if (selectAll.value) {
-        checkedItems.value = [...filteredList.value]; // Взять из отфильтрованного списка
-      } else {
-        checkedItems.value = [];
-      }
-    };
+const handleSelectAll = () => {
+  if (selectAll.value) {
+    checkedItems.value = [...filteredList.value]; 
+  } else {
+    checkedItems.value = [];
+  }
+};
 
-    const updateDisplayText = () => {
-      selectAll.value = checkedItems.value.length === filteredList.value.length;
-    };
+const updateDisplayText = () => {
+  selectAll.value = checkedItems.value.length === filteredList.value.length;
+};
 
-    const itemsToDisplay = computed(() => {
-      return filteredList.value;
-    });
+const itemsToDisplay = computed(() => {
+  return filteredList.value;
+});
 
-    const showSearch = computed(() => items.value.length > 10);
+const showSearch = computed(() => items.value.length > 10);
 
-    return {
-      isDropdownVisible,
-      searchQuery,
-      selectAll,
-      checkedItems,
-      displayText,
-      highlightMatch,
-      itemsToDisplay,
-      showSearch,
-      handleBlur,
-      handleSelectAll,
-      updateDisplayText,
-      noResultsFound,
-    };
-  },
+return {
+  isDropdownVisible,
+  searchQuery,
+  selectAll,
+  checkedItems,
+  displayText,
+  highlightMatch,
+  itemsToDisplay,
+  showSearch,
+  handleBlur,
+  handleSelectAll,
+  updateDisplayText,
+  noResultsFound,
+};
+},
 });
 </script>
 
-
-
-
-
-
 <style lang="scss" scoped>
 
-$width-checkbox: 400px;
+$width-checkbox:450px;
 $height-input: 45px;
 $focus-color: #007bff;
+$font-allelement: sans-serif;
+$height-input-icon:$height-input*0.5;
 
 .filter-container {
-  position: static;
-  width: $width-checkbox;
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-top: 24px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
+position: static;
+width: $width-checkbox;
+margin-left: 16px;
+margin-right: 16px;
+margin-top: 24px;
+margin-bottom: 24px;
+display: flex;
+flex-direction: column;
+.hello{
+width: 50px;
+}
 
-  .filter-label {
-    position: relative;
-    width: 90px;
-    height: 20px;
-    top: 10px;
-    left: 15px;
-    background-color: white;
-    padding: 0 5px;
-    font-size: 16px;
-    color: #00000094;
 
-    &.active {
-      color: $focus-color;
-    }
-  }
-  .iconPositionDown {
-      position: relative;
-      
-      width: 40px;
-      height: 40px;
-      top: -20px;
-      margin-left: auto;
-      transform: translateY(-65%) rotate(180deg);
-      font-size: 33px;
-      color: #9f979773;
-  }
-  .iconPositionTop {
-      position: relative;
-      margin-left: auto;
-      width: 40px;
-      height: 40px;
-      top: -20px;
-      transform: translateY(-35%);
-      font-size: 33px;
-      color: #0a0000c2;
-    
-  }
 
-  .filter-input {
-    width: 100%;
-    padding-left: 10px;
-    font-size: 16px;
-    border: 1.5px solid #cccccc73;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.2s;
-    cursor: pointer;
-    box-sizing: border-box;
-    height: $height-input;
-    
-    
+.filter-label {
+position: relative;
+width: 90px;
+height: 20px;
+top: 10px;
+left: 15px;
+background-color: white;
+padding: 0 5px;
+font-size: 16px;
+color: #00000094;
+font-family: $font-allelement;
 
-      &.has-dropdown {
-        border-bottom: none;
-        border-radius: 4px 4px 0 0;
-        border-color: $focus-color;
-      }
-    }
+&.active {
+  color: $focus-color;
+}
+}
 
-    
-    
-    
-    
-    &.has-dropdown {
-      border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      border-color: $focus-color;
-      
-      
-      
-    }
-   
-  }
+
+
+
+}
+
+.filter-input {
+width: 100%;
+padding-left: 10px;
+font-size: 16px;
+border: 1.5px solid #9f979773;
+border-radius: 8px;
+outline: none;
+transition: border-color 0.2s;
+cursor: pointer;
+box-sizing: border-box;
+height: $height-input;
+padding-right: 40px; 
+
+&.has-dropdown {
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  border-color: $focus-color;
   
+  
+  
+}
+ 
+}
 
-  .dropdown {
-    position: relative;
-    background-color: white;
-    border: 1.5px solid $focus-color;
-    border-radius: 0 0 8px 8px;
-    min-height: 180px;
-    max-height: 400px;
-    overflow-y: auto;
-    width: 100%;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    border-top: #ffffff;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    
 
-    .search-wrapper {
-      position: relative;
-      width: 100%;
-    }
 
-    .search-wrapper {
-    position: relative;
-    width: 95%;
-    margin: auto;
+
+.dropdown {
+position: relative;
+background-color: white;
+border: 1.5px solid $focus-color;
+border-radius: 0 0 8px 8px;
+min-height: 180px;
+max-height: 400px;
+overflow-y: auto;
+width: 100%;
+transition: border-color 0.2s, box-shadow 0.2s;
+border-top: #ffffff;
+box-sizing: border-box;
+display: flex;
+flex-direction: column;
+
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-wrapper {
+position: relative;
+width: 95%;
+margin: auto;
 }
 
 .search {
-    width: 100%; 
-    height: $height-input;
-    border: 1.5px solid #cccccc73;
-    border-radius: 4px;
-    outline: none;
-    padding-right: 40px; 
-    padding-left: 10px;
-    box-sizing: border-box;
-    font-size: 16px ;
+width: 100%; 
+height: $height-input;
+border: 1.5px solid #9f979773;
+border-radius: 4px;
+outline: none;
+padding-right: 40px; 
+padding-left: 10px;
+box-sizing: border-box;
+font-size: 16px ;
 
-    &:focus {
-        border-color: $focus-color;
+&:focus {
+    border-color: $focus-color;
 
-        ~ .searchicon {
-            &::before {
-                border-color: $focus-color;
-            }
-            &::after {
-                background: $focus-color;
-            }
+    ~ .searchicon {
+        &::before {
+            border-color: $focus-color;
+        }
+        &::after {
+            background: $focus-color;
         }
     }
+}
 }
 
 .searchicon {
+position: absolute;
+right: 10px; 
+top: 50%;
+transform: translateY(-50%);
+width: 30px;
+height: 30px;
+display: grid;
+place-items: center;
+pointer-events: none;
+
+&::before {
+    content: '';
+    width: 9.5px;
+    height: 9.5px;
+    border: 1.5px solid #9f979773; 
+    border-radius: 50%;
+    transition: border-color 0.2s;
     position: absolute;
-    right: 10px; 
-    top: 50%;
-    transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-
-    &::before {
-        content: '';
-        width: 9.5px;
-        height: 9.5px;
-        border: 1.5px solid #cccccc73; 
-        border-radius: 50%;
-        transition: border-color 0.2s;
-        position: absolute;
-        transform: translate(-2px, -2px);
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        width: 1.5px;
-        height: 9.5px;
-        background: #cccccc73;
-        transform: rotate(-45deg) translate(-0px, 7px);
-    }
+    transform: translate(-2px, -2px);
 }
 
-    
+&::after {
+    content: '';
+    position: absolute;
+    width: 1.5px;
+    height: 9.5px;
+    background: #9f979773;
+    transition: border-color 0.2s;
+    transform: rotate(-45deg) translate(-0px, 7px);
+}
+}
+
+
 
 .dropdown-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
+list-style: none;
+padding: 0;
+margin: 0;
+width: 100%;
 
-  li {
-    padding: 8px;
-    margin: 0;
-    cursor: pointer;
-    text-align: start;
-    position: relative;
-    &:hover {
-          background-color: #ece7e773;
-        }
+li {
+padding: 8px;
+margin: 0;
+cursor: pointer;
+text-align: start;
+position: relative;
+&:hover {
+      background-color: #ece7e773;
+    }
 }
 
 
 
-    b {
-      font-weight: bold;
-    }
-  }
+b {
+  font-weight: bold;
+}
+}
+.no-results {
+color:#00000094;
+position: relative;
+margin: auto;
+font-size: 16px;
+font-family: $font-allelement;
+
+  
+
+}
 } 
 
 

@@ -4,7 +4,7 @@
     <input
       type="text"
       v-model="formattedDate"
-      @focus="toggleCalendar(true)"
+      @click="isCalendarVisible = !isCalendarVisible"
       placeholder="__.__.____ г"
       class="date-input"
       maxlength="10"
@@ -81,7 +81,6 @@ const selectedDay = ref<number | null>(null);
 const isCalendarVisible = ref<boolean>(false);
 const isMonthDropdownVisible = ref<boolean>(false);
 const isYearDropdownVisible = ref<boolean>(false);
-const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
 
 const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -105,17 +104,12 @@ const nextMonthDays = computed(() => {
 
 const formattedDate = computed({
   get: () => {  
-    console.log('GET');
-    
     if (selectedDay.value === null) return '';
     const dateFormat = `${String(selectedDay.value).padStart(2, '0')}.${String(selectedMonth.value + 1).padStart(2, '0')}.${selectedYear.value}`;
     return dateFormat;
-    // if (datePattern.test(dateFormat)) {
-    // }
   },
   set: (value: string) => {
-    console.log('SET', value);
-    
+    const datePattern = /^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(\d{4})$/;
     if (datePattern.test(value)) {
       const [day, month, year] = value.split('.').map(Number);
       if (day && month && year) {
@@ -126,10 +120,6 @@ const formattedDate = computed({
     }
   }
 });
-
-const toggleCalendar = (visible: boolean) => {
-  isCalendarVisible.value = visible;
-};
 
 const toggleMonthDropdown = () => {
   isMonthDropdownVisible.value = !isMonthDropdownVisible.value;
@@ -157,7 +147,6 @@ const selectYear = (year: number) => {
 
 const selectDay = (day: number) => {
   selectedDay.value = day;
-  toggleCalendar(false);
 };
 
 const prevMonth = () => {
@@ -186,24 +175,6 @@ const nextYear = () => {
   selectedYear.value += 1;
 };
 
-
-// const updateDate = (event: Event) => {
-//   const input = event.target as HTMLInputElement;
-  
-//   if (datePattern.test(input.value)) {
-//     console.log('input.value', input.value);
-//     formattedDate.value = input.value;
-//   }
-//   }
-// };
-
-// const handleInput = (event: Event) => {
-//   const input = event.target as HTMLInputElement;
-//   if (input.value.length === 10) {
-//     updateDate(event);
-//   }
-// };
-
 const isToday = (day: number) => {
   const today = new Date();
   return (
@@ -230,25 +201,26 @@ const isWeekendNextMonth = (day: number) => {
 </script>
 
 <style lang="scss" scoped>
-
-$date-picker-border: #dcdcdcb0;
-$today-bg: #a2c8ff;
+$border-color: #dcdcdcd2;
 $weekend-color: #e60000;
-$font-color: #333;
+$date-picker-margin: 17px;
+$font-family: sans-serif;
+$border-radius: 7px;
+$cursor: pointer;
 
 .date-picker {
   position: relative;
   width: 200px;
   height: 30px;
-  font-family: sans-serif;
-  margin: 17px;
+  font-family: $font-family;
+  margin: $date-picker-margin;
   
   .date-input {
     width: 100%;
     height: 100%;
     padding: 6px;
-    border: 1px solid $date-picker-border;
-    border-radius: 7px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
     font-size: 25px;
     outline: none;
     background-image: url('./img/calendar.png');
@@ -264,16 +236,15 @@ $font-color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: sticky;
-    top: 131px;
+    position: relative;
+    top: 2px;
     width: 500px;
     height: 500px;
-    background-color: white;
-    border: 1px solid $date-picker-border;
-    border-radius: 7px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
     padding: 10px;
-    font-family: sans-serif;
-    margin: 17px;
+    font-family: $font-family;
+    margin: $date-picker-margin;
 
     .calendar-header {
       display: flex;
@@ -295,9 +266,8 @@ $font-color: #333;
       .month, .year {
         font-size: 27px;
         font-weight: bold;
-        color: $font-color;
         position: relative;
-        cursor: pointer;
+        cursor: $cursor;
         padding: 0 12px;
       }
 
@@ -305,8 +275,7 @@ $font-color: #333;
         background: none;
         border: none;
         font-size: 23px;
-        cursor: pointer;
-        color: $font-color;
+        cursor: $cursor;
       }
 
       .month-dropdown, .year-dropdown {
@@ -323,7 +292,7 @@ $font-color: #333;
         span {
           display: block;
           padding: 5px;
-          cursor: pointer;
+          cursor: $cursor;
           &:hover {
             background: #e6e6e6;
           }
@@ -338,20 +307,19 @@ $font-color: #333;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
       margin-bottom: 10px;
-      color: $font-color;
     }
 
     .days {
-      border: 0.5px solid $date-picker-border;
+      border: 0.5px solid $border-color;
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       width: 90%;
       height: 70%;
 
       .day {
-        border: 0.5px solid $date-picker-border;
+        border: 0.5px solid $border-color;
         padding: 8px;
-        cursor: pointer;
+        cursor: $cursor;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -380,5 +348,4 @@ $font-color: #333;
       }
     }
   }
-
 </style>
