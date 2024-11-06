@@ -5,7 +5,6 @@
       type="text"
       v-model="formattedDate"
       @focus="toggleCalendar(true)"
-      @input="updateDate"
       placeholder="__.__.____ г"
       class="date-input"
       maxlength="10"
@@ -82,6 +81,7 @@ const selectedDay = ref<number | null>(null);
 const isCalendarVisible = ref<boolean>(false);
 const isMonthDropdownVisible = ref<boolean>(false);
 const isYearDropdownVisible = ref<boolean>(false);
+const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
 
 const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -105,15 +105,24 @@ const nextMonthDays = computed(() => {
 
 const formattedDate = computed({
   get: () => {  
+    console.log('GET');
+    
     if (selectedDay.value === null) return '';
-    return `${String(selectedDay.value).padStart(2, '0')}.${String(selectedMonth.value + 1).padStart(2, '0')}.${selectedYear.value}`;
+    const dateFormat = `${String(selectedDay.value).padStart(2, '0')}.${String(selectedMonth.value + 1).padStart(2, '0')}.${selectedYear.value}`;
+    return dateFormat;
+    // if (datePattern.test(dateFormat)) {
+    // }
   },
   set: (value: string) => {
-    const [day, month, year] = value.split('.').map(Number);
-    if (day && month && year >= 1000 && year <= 9999) {
-      selectedDay.value = day;
-      selectedMonth.value = month - 1;
-      selectedYear.value = year;
+    console.log('SET', value);
+    
+    if (datePattern.test(value)) {
+      const [day, month, year] = value.split('.').map(Number);
+      if (day && month && year) {
+        selectedDay.value = day;
+        selectedMonth.value = month - 1;
+        selectedYear.value = year;
+      }
     }
   }
 });
@@ -178,14 +187,14 @@ const nextYear = () => {
 };
 
 
-const updateDate = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  // const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{4})$/;
-  formattedDate.value = input.value;
-  console.log('input.value', typeof input.value);
+// const updateDate = (event: Event) => {
+//   const input = event.target as HTMLInputElement;
   
- 
-  }
+//   if (datePattern.test(input.value)) {
+//     console.log('input.value', input.value);
+//     formattedDate.value = input.value;
+//   }
+//   }
 // };
 
 // const handleInput = (event: Event) => {
@@ -223,7 +232,6 @@ const isWeekendNextMonth = (day: number) => {
 <style lang="scss" scoped>
 
 $date-picker-border: #dcdcdcb0;
-$selected-day-bg: #5a64f0;
 $today-bg: #a2c8ff;
 $weekend-color: #e60000;
 $font-color: #333;
@@ -350,7 +358,7 @@ $font-color: #333;
         font-size: 20px;
 
         &.selected {
-          background-color: $selected-day-bg;
+          background-color: #5a64f0;
           color: white;
         }
 
