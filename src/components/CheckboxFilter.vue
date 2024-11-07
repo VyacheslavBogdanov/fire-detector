@@ -8,9 +8,10 @@
       v-model="displayText"
       @focus="isDropdownVisible = true"
       @blur="handleBlur"
-      :class="{'filter-input': true, 'has-dropdown': isDropdownVisible }"
+      :class="{ 'filter-input': true, 'has-dropdown': isDropdownVisible }"
     />
-    <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown' : !isDropdownVisible }">⌃</div> 
+    <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown': !isDropdownVisible }">⌃</div>
+
     <div v-if="isDropdownVisible" class="dropdown">
       <div class="search-wrapper" v-if="showSearch">
         <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" />
@@ -36,8 +37,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue';
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -49,13 +50,11 @@ function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (.
   };
 }
 
-export default defineComponent({
-  setup() {
-    const isDropdownVisible = ref<boolean>(false);
-    const searchQuery = ref<string>('');
-    const selectAll = ref<boolean>(false);
-    const checkedItems = ref<string[]>([]);
-    const items = ref<string[]>([
+const isDropdownVisible = ref<boolean>(false);
+const searchQuery = ref<string>('');
+const selectAll = ref<boolean>(false);
+const checkedItems = ref<string[]>([]);
+const items = ref<string[]>([
   "Смирнов А.В.", "Иванов Д.С.", "Кузнецов Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
   "Новиков А.Д.", "Морозов С.А.", "Петров Е.В.", "Васильев А.С.", "Соколов В.И.", "Михайлов О.В.",
   "Фёдоров Д.Л.", "Орлов И.К.", "Волков А.А.", "Андреев П.С.", "Никитин О.В.", "Захаров А.И.", "Куликов Д.П.",
@@ -64,50 +63,44 @@ export default defineComponent({
   "Богданов С.К.", "Мартынов Е.В.", "Воробьёв А.М.", "Антипов Д.А.", "Тарасов В.О.", "Беляев Л.В.", "Комаров И.С.", "Мельников Е.К.",
   "Шевченко С.В.", "Емельянов О.П.", "Князев В.А.", "Белов Е.И.", "Щербаков С.Д.", "Назаров Д.В.", "Кочетов О.С.", "Афанасьев Н.А."
 ].sort());
-    const noResultsFound = ref<boolean>(false); 
+const noResultsFound = ref<boolean>(false);
+const filteredList = ref<string[]>(items.value);
 
-    const filteredList = ref<string[]>(items.value); 
+const updateFilteredList = debounce(() => {
+  filteredList.value = items.value.filter(item =>
+    item.toLowerCase().startsWith(searchQuery.value.toLowerCase())
+  );
 
-    const updateFilteredList = debounce(() => {
-      filteredList.value = items.value.filter(item =>
-        item.toLowerCase().startsWith(searchQuery.value.toLowerCase())
-      );
+  noResultsFound.value = filteredList.value.length === 0;
+}, 700);
 
-      noResultsFound.value = filteredList.value.length === 0; 
-    }, 700);
+watch(searchQuery, () => {
+  updateFilteredList();
+});
 
-    watch(searchQuery, () => {
-      updateFilteredList();
-    });
+const displayText = computed(() => {
+  if (checkedItems.value.length === 0) return 'Не выбрано';
+  if (checkedItems.value.length === 1) return checkedItems.value[0];
+  return `Выбрано ${checkedItems.value.length}`;
+});
 
-    const displayText = computed(() => {
-      if (checkedItems.value.length === 0) return 'Не выбрано';
-      if (checkedItems.value.length === 1) return checkedItems.value[0];
-      return `Выбрано ${checkedItems.value.length}`;
-    });
+const highlightMatch = (item: string): string => {
+  if (!searchQuery.value) return item;
+  const regex = new RegExp(`^(${searchQuery.value})`, 'i');
+  return item.replace(regex, '<b>$1</b>');
+};
 
-    const highlightMatch = (item: string): string => {
-      if (!searchQuery.value) return item;
-      const regex = new RegExp(`^(${searchQuery.value})`, 'i');
-      return item.replace(regex, '<b>$1</b>');
-    };
-
-    const handleBlur = (event: FocusEvent) => {
-      const relatedTarget = event.relatedTarget as HTMLElement;
-      console.log('relatedTarget', relatedTarget);
-      
-
-      if (relatedTarget && relatedTarget.closest('.dropdown')) {
-        return; 
-      }
-
-      isDropdownVisible.value = false;
-
-    };
+const handleBlur = (event: FocusEvent) => {
+  const relatedTarget = event.relatedTarget as HTMLElement;
+  if (relatedTarget && relatedTarget.closest('.dropdown')) {
+    return;
+  }
+  isDropdownVisible.value = false;
+};
 
 const handleSelectAll = () => {
   if (selectAll.value) {
-    checkedItems.value = [...filteredList.value]; 
+    checkedItems.value = [...filteredList.value];
   } else {
     checkedItems.value = [];
   }
@@ -118,27 +111,19 @@ const updateDisplayText = () => {
 };
 
 const itemsToDisplay = computed(() => {
-  return filteredList.value;
+  if (filteredList.value.length <= 10) return filteredList.value;
+
+  const selectedItems = filteredList.value
+    .filter(item => checkedItems.value.includes(item))
+    .sort((a, b) => a.localeCompare(b));
+
+  const unselectedItems = filteredList.value
+    .filter(item => !checkedItems.value.includes(item));
+
+  return [...selectedItems, ...unselectedItems];
 });
 
 const showSearch = computed(() => items.value.length > 10);
-
-return {
-  isDropdownVisible,
-  searchQuery,
-  selectAll,
-  checkedItems,
-  displayText,
-  highlightMatch,
-  itemsToDisplay,
-  showSearch,
-  handleBlur,
-  handleSelectAll,
-  updateDisplayText,
-  noResultsFound,
-};
-},
-});
 </script>
 
 <style lang="scss" scoped>
@@ -236,15 +221,12 @@ box-sizing: border-box;
 display: flex;
 flex-direction: column;
 
-.search-wrapper {
-  position: relative;
-  width: 100%;
-}
+
 
 .search-wrapper {
 position: relative;
 width: 95%;
-margin: auto;
+margin: 7px 0 0 10px;
 }
 
 .search {
