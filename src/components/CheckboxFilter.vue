@@ -1,20 +1,22 @@
 <template>
   <h1>Checkbox Фильтр</h1>
-  <div class="filter-container">
+  <div class="filter-container" ref="filterContainer">
     <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
     <input
       readonly
       type="text"
       v-model="displayText"
       @focus="isDropdownVisible = true"
-      @blur="handleBlur"
       :class="{ 'filter-input': true, 'has-dropdown': isDropdownVisible }"
     />
     <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown': !isDropdownVisible }">⌃</div>
-
-    <div v-if="isDropdownVisible" class="dropdown">
+    <div
+      v-if="isDropdownVisible"
+      class="dropdown"
+      @mousedown="handleDropdownClick"
+    >
       <div class="search-wrapper" v-if="showSearch">
-        <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" />
+        <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" @focus="isDropdownVisible = true" />
         <span class="searchicon"></span>
       </div>
       <ul class="dropdown-list">
@@ -24,7 +26,6 @@
             <span>Все</span>
           </label>
         </li>
-
         <li v-for="(item, index) in itemsToDisplay" :key="index">
           <label>
             <input type="checkbox" v-model="checkedItems" :value="item" @change="updateDisplayText" />
@@ -38,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -90,12 +91,27 @@ const highlightMatch = (item: string): string => {
   return item.replace(regex, '<b>$1</b>');
 };
 
-const handleBlur = (event: FocusEvent) => {
-  const relatedTarget = event.relatedTarget as HTMLElement;
-  if (relatedTarget && relatedTarget.closest('.dropdown')) {
-    return;
+const filterContainer = ref<HTMLElement | null>(null);
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (filterContainer.value && !filterContainer.value.contains(event.target as Node)) {
+    isDropdownVisible.value = false;
   }
-  isDropdownVisible.value = false;
+};
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
+});
+
+const handleDropdownClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement;
+  if (!target.classList.contains('search')) {
+    event.preventDefault();
+  }
 };
 
 const handleSelectAll = () => {
