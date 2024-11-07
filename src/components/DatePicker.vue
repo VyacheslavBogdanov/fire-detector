@@ -244,6 +244,7 @@ $cursor: pointer;
     border-radius: $border-radius;
     padding: 10px;
     font-family: $font-family;
+    font-weight: 150;
     margin: $date-picker-margin;
 
     .calendar-header {

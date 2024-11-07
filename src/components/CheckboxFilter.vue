@@ -101,6 +101,8 @@ export default defineComponent({
 
     const handleBlur = (event: FocusEvent) => {
       const relatedTarget = event.relatedTarget as HTMLElement;
+      console.log('relatedTarget', relatedTarget);
+      
 
       if (relatedTarget && relatedTarget.closest('.dropdown')) {
         return; 

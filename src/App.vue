@@ -3,7 +3,7 @@
     <DatePicker />
     <Search />
     <DropdownWithSearch />
-    <CheckboxFilter />
+    <!-- <CheckboxFilter /> -->
   </div>
 </template>
 
