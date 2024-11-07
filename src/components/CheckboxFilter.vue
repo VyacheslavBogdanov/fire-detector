@@ -1,9 +1,7 @@
 <template>
-  <h1>Checkbox</h1>
+  <h1>Checkbox Фильтр</h1>
   <div class="filter-container">
-    
-    <!-- <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label> -->
-    
+    <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
     <input
       readonly
       type="text"
@@ -11,16 +9,13 @@
       @focus="isDropdownVisible = true"
       @blur="handleBlur"
       :class="{'filter-input': true, 'has-dropdown': isDropdownVisible }"
-      
     />
-    
     <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown' : !isDropdownVisible }">⌃</div> 
     <div v-if="isDropdownVisible" class="dropdown">
       <div class="search-wrapper" v-if="showSearch">
         <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" />
         <span class="searchicon"></span>
       </div>
-
       <ul class="dropdown-list">
         <li v-if="itemsToDisplay.length > 0">
           <label>
@@ -36,8 +31,6 @@
           </label>
         </li>
       </ul>
-    
-
       <div v-if="noResultsFound" class="no-results">Результаты не найдены</div>
     </div>
   </div>
@@ -70,7 +63,7 @@ export default defineComponent({
   "Ефимов В.П.", "Тимофеев Д.В.", "Филиппов Е.С.", "Макаров О.А.", "Сидоров В.Д.", "Чернов И.П.", "Савельев Н.В.", "Павлов А.С.",
   "Богданов С.К.", "Мартынов Е.В.", "Воробьёв А.М.", "Антипов Д.А.", "Тарасов В.О.", "Беляев Л.В.", "Комаров И.С.", "Мельников Е.К.",
   "Шевченко С.В.", "Емельянов О.П.", "Князев В.А.", "Белов Е.И.", "Щербаков С.Д.", "Назаров Д.В.", "Кочетов О.С.", "Афанасьев Н.А."
-]);
+].sort());
     const noResultsFound = ref<boolean>(false); 
 
     const filteredList = ref<string[]>(items.value); 
@@ -154,10 +147,10 @@ $width-checkbox:450px;
 $height-input: 45px;
 $focus-color: #007bff;
 $font-allelement: sans-serif;
-$height-input-icon:$height-input*0.5;
+
 
 .filter-container {
-position: static;
+position: relative;
 width: $width-checkbox;
 margin-left: 16px;
 margin-right: 16px;
@@ -165,20 +158,35 @@ margin-top: 24px;
 margin-bottom: 24px;
 display: flex;
 flex-direction: column;
-.hello{
-width: 50px;
-}
 
-
+.iconPositionDown {
+    position: absolute;
+      right: 15px;
+      top: 44.5px;
+      transform: translateY(-65%) rotate(180deg);
+      font-size: 25px;
+      font-weight: lighter;
+      color: #0a00007d;
+  }
+  .iconPositionTop {
+      position: absolute;
+      right: 15px;
+      top: 44.5px;
+      transform: translateY(-35%);
+      font-size: 25px;
+      font-weight: lighter;
+      color: #0a0000c2;
+    
+  }
 
 .filter-label {
 position: relative;
-width: 90px;
+width: min-content;
 height: 20px;
 top: 10px;
 left: 15px;
 background-color: white;
-padding: 0 5px;
+padding: 0 3px;
 font-size: 16px;
 color: #00000094;
 font-family: $font-allelement;
@@ -188,15 +196,13 @@ font-family: $font-allelement;
 }
 }
 
-
-
-
 }
 
 .filter-input {
 width: 100%;
 padding-left: 10px;
 font-size: 16px;
+color: #00000094;
 border: 1.5px solid #9f979773;
 border-radius: 8px;
 outline: none;
@@ -211,14 +217,9 @@ padding-right: 40px;
   border-radius: 8px 8px 0 0;
   border-color: $focus-color;
   
-  
-  
 }
  
 }
-
-
-
 
 .dropdown {
 position: relative;
@@ -235,7 +236,6 @@ box-sizing: border-box;
 display: flex;
 flex-direction: column;
 
-
 .search-wrapper {
   position: relative;
   width: 100%;
@@ -251,7 +251,7 @@ margin: auto;
 width: 100%; 
 height: $height-input;
 border: 1.5px solid #9f979773;
-border-radius: 4px;
+border-radius: 8px;
 outline: none;
 padding-right: 40px; 
 padding-left: 10px;
@@ -305,8 +305,6 @@ pointer-events: none;
 }
 }
 
-
-
 .dropdown-list {
 list-style: none;
 padding: 0;
@@ -324,8 +322,6 @@ position: relative;
     }
 }
 
-
-
 b {
   font-weight: bold;
 }
@@ -337,11 +333,7 @@ margin: auto;
 font-size: 16px;
 font-family: $font-allelement;
 
-  
-
 }
 } 
-
-
 
 </style>

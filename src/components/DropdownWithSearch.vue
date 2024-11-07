@@ -131,20 +131,18 @@ $font-allelement: sans-serif;
     left: 10px;
     top: 50%;
     font-size: $font-size-container;
-    padding: 0.5px;
+    padding: 3px;
     transform: translateY(-50%);
     transition: 0.8ms ease;
     transform-origin: left top;
     pointer-events: none;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 200px;
+    width: min-content;
     color: #9f979773;
     font-family: $font-allelement;
     white-space: nowrap;
   }
-  
-
   
   .iconPositionDown {
     position: absolute;
@@ -165,7 +163,6 @@ $font-allelement: sans-serif;
       color: #0a0000c2;
     
   }
-
 
   .dropdown {
     background-color: white;
