@@ -1,5 +1,5 @@
 <template>
-    <h1>Chips(в процессе разработки...)</h1>
+    <h1>Chips</h1>
     <div class="filter-container" ref="filterContainer">
       <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
       <input
@@ -39,10 +39,11 @@
     <div v-if="!isDropdownVisible" class="chips-container">
       <div v-for="(chip, index) in checkedItems" :key="index" class="chip" :title="chip.length > 15 ? chip : ''">
         <span class="chip-content">{{ chip }}</span>
-        <button class="chip-close" @click="removeChip(chip)">✕</button>
+        <button class="chip-close" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
       </div>
     </div>
   </template>
+  
   
   <script setup lang="ts">
   import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
@@ -62,7 +63,7 @@
   const selectAll = ref<boolean>(false);
   const checkedItems = ref<string[]>([]);
   const items = ref<string[]>([
-    "Смирнов А.Вdffjsdfjsdfljdsfjsdfsdfjsd.", "Иванов Д.С.", "Кузнецов Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
+    "Смирноввввввввввввввввввввввввввввв А.В.", "Ивановвввввввввввввввввввв Д.С.", "Кузнецоввввввввввввввввв Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
     "Новиков А.Д.", "Морозов С.А.", "Петров Е.В.", "Васильев А.С.", "Соколов В.И.", "Михайлов О.В.",
     "Фёдоров Д.Л.", "Орлов И.К.", "Волков А.А.", "Андреев П.С.", "Никитин О.В.", "Захаров А.И.", "Куликов Д.П.",
     "Александров С.В.", "Дмитриев В.Н.", "Ковалёв Е.М.", "Ситников Л.П.", "Григорьев В.Д.", "Гордеев А.С.", "Антонов И.Н.",
@@ -152,24 +153,24 @@
     updateDisplayText();
   };
   </script>
-  
+
   <style lang="scss" scoped>
-
-$height-input: 45px;
-$focus-color: #007bff;
-$font-allelement: sans-serif;
-$border-color: #9f979773;
-$icon-color: #0a00007d;
-$icon-color-active: #0a0000c2;
-$hover-background: #ece7e773;
-$text-color: #00000094;
-$font-size: 16px;
-$cursor: pointer;
-$chip-bg-color: #e0e0e0; 
-$chip-text-color: #333; 
-$chip-hover-bg-color: #d0d0d0; 
-$chip-border-radius: 16px; 
-
+  $height-input: 45px;
+  $focus-color: #007bff;
+  $font-allelement: sans-serif;
+  $border-color: #9f979773;
+  $icon-color: #0a00007d;
+  $icon-color-active: #0a0000c2;
+  $hover-background: #ece7e773;
+  $text-color: #00000094;
+  $font-size: 16px;
+  $cursor: pointer;
+  $chip-bg-color: #e0e0e0;
+  $chip-text-color: #333;
+  $chip-hover-bg-color: #d0d0d0;
+  $chip-border-radius: 16px;
+  
+ 
 .filter-container {
   position: relative;
   width: 450px;
@@ -234,46 +235,6 @@ $chip-border-radius: 16px;
     border-bottom: none;
     border-radius: 8px 8px 0 0;
     border-color: $focus-color;
-  }
-}
-
-.chip-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  max-width: 600px;
-  max-height: 225px; 
-  overflow-y: auto;
-
-  .chip {
-    display: flex;
-    align-items: center;
-    background-color: $chip-bg-color;
-    color: $chip-text-color;
-    padding: 4px 8px;
-    border-radius: $chip-border-radius;
-    max-width: 170px;
-    font-family: $font-allelement;
-    font-size: $font-size;
-    position: relative;
-
-    &:hover {
-      background-color: $chip-hover-bg-color;
-    }
-
-    .chip-label {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .chip-close {
-      margin-left: 6px;
-      cursor: $cursor;
-      font-weight: bold;
-      font-size: 12px;
-    }
   }
 }
 
@@ -374,11 +335,12 @@ $chip-border-radius: 16px;
       }
 
       label {
-        cursor: $cursor;
+      cursor: $cursor;
 
-        input {
-          cursor: $cursor;
-        }
+      input {
+      cursor: $cursor;
+
+      }
       }
     }
 
@@ -395,4 +357,50 @@ $chip-border-radius: 16px;
     font-family: $font-allelement;
   }
 }
-</style>
+
+  .chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: calc(5 * 40px + 16px);
+    width: 600px;
+    overflow-y: auto;
+    gap: 8px;
+    margin-top: 12px;
+  
+    .chip {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      height: 32px;
+      max-width: 170px;
+      background-color: $chip-bg-color;
+      border-radius: $chip-border-radius;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: $font-size;
+      color: $chip-text-color;
+      cursor: default;
+      position: relative;
+  
+      &:hover {
+        background-color: $chip-hover-bg-color;
+      }
+  
+      .chip-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+  
+      .chip-close {
+        background: none;
+        border: none;
+        color: $icon-color;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 8px;
+      }
+    }
+  }
+  </style>
+  
