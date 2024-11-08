@@ -1,3 +1,4 @@
+
 <template>
   <div :class="['informer-container', theme]">
     <button class="ThemeToggle" @click="toggleTheme">
@@ -46,7 +47,7 @@ const toggleTheme = () => {
   flex-direction: column; 
   gap: 30px; 
   transition: background-color 0.3s, color 0.3s; 
-  width: 800px;
+  width: 400px;
   
 
   &.light {
@@ -74,6 +75,7 @@ const toggleTheme = () => {
 }
 
 .informer {
+  position: relative;
   display: flex; 
   align-items: center;
   padding: 10px 30px 10px 40px;
@@ -84,6 +86,14 @@ const toggleTheme = () => {
   font-size: 23px;
   font-family: sans-serif;
   height: 40px;
+  
+  .icon {
+  display: flex;
+  position: absolute;
+  transform:rotate(180deg);
+  left: 10px;
+  height: 30px;
+  }
   
 
   
@@ -144,36 +154,7 @@ const toggleTheme = () => {
       color: #ffffff; 
     }
   }
-  .icon {
-  display: flex;
-  position: absolute;
-  transform:rotate(180deg);
-  left: 85px;
-  height: 30px;
-  }
+  
 }
-
-
-//   }
-//   .icon {
-//   margin-right: 5px;
-//   display: flex;
-//   opacity: 0.5; 
-
-
-  
-
-// }
-// .icon img {
-//   width: 25px; 
-//   height: 25px;
-//   justify-content: center;
-//   fill: currentColor;
-//   opacity: 0.9; 
-  
- 
-// }
-
-
 
 </style>

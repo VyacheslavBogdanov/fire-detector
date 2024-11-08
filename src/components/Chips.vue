@@ -39,7 +39,7 @@
     <div v-if="!isDropdownVisible" class="chips-container">
       <div v-for="(chip, index) in checkedItems" :key="index" class="chip" :title="chip.length > 15 ? chip : ''">
         <span class="chip-content">{{ chip }}</span>
-        <button class="chip-close" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
+        <button class="delete-chip" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
       </div>
     </div>
   </template>
@@ -392,13 +392,26 @@
         text-overflow: ellipsis;
       }
   
-      .chip-close {
+      .delete-chip {
         background: none;
         border: none;
         color: $icon-color;
-        font-size: 16px;
+        font-size: 8.5px;
+        font-weight: bold;
         cursor: pointer;
         margin-left: 8px;
+
+        .delete-chip-icon {
+            height: 14px;
+            width: 14px;
+            border: none;
+            border-radius: 50%;
+            background-color: rgb(88, 85, 85);
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
       }
     }
   }
