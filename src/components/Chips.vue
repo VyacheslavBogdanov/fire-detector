@@ -39,6 +39,7 @@
     <div v-if="!isDropdownVisible" class="chips-container">
       <div v-for="(chip, index) in checkedItems" :key="index" class="chip" :title="chip.length > 15 ? chip : ''">
         <span class="chip-content">{{ chip }}</span>
+        <span class="tooltip">{{ chip }}</span>
         <button class="delete-chip" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
       </div>
     </div>
@@ -63,7 +64,7 @@
   const selectAll = ref<boolean>(false);
   const checkedItems = ref<string[]>([]);
   const items = ref<string[]>([
-    "Смирноввввввввввввввввввввввввввввв А.В.", "Ивановвввввввввввввввввввв Д.С.", "Кузнецоввввввввввввввввв Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
+    "1234567890123456789012345", "Ивановвввввввввввввввввввв Д.С.", "Кузнецоввввввввввввввввв Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
     "Новиков А.Д.", "Морозов С.А.", "Петров Е.В.", "Васильев А.С.", "Соколов В.И.", "Михайлов О.В.",
     "Фёдоров Д.Л.", "Орлов И.К.", "Волков А.А.", "Андреев П.С.", "Никитин О.В.", "Захаров А.И.", "Куликов Д.П.",
     "Александров С.В.", "Дмитриев В.Н.", "Ковалёв Е.М.", "Ситников Л.П.", "Григорьев В.Д.", "Гордеев А.С.", "Антонов И.Н.",
@@ -361,42 +362,62 @@
   .chips-container {
     display: flex;
     flex-wrap: wrap;
-    max-height: calc(5 * 40px + 16px);
+    height: 153px;
     width: 600px;
     overflow-y: auto;
     gap: 8px;
-    margin-top: 12px;
-  
+    margin: 12px 0 0 16px;
+
     .chip {
-      display: flex;
-      align-items: center;
-      padding: 0 8px;
-      height: 32px;
-      max-width: 170px;
-      background-color: $chip-bg-color;
-      border-radius: $chip-border-radius;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: $font-size;
-      color: $chip-text-color;
-      cursor: default;
-      position: relative;
-  
-      &:hover {
-        background-color: $chip-hover-bg-color;
-      }
-  
-      .chip-content {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  height: 23px;
+  max-width: 170px;
+  background-color: #e0e0e0;
+  border-radius: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  color: #333;
+  cursor: default;
+
+  &:hover {
+    background-color: $chip-hover-bg-color;
+  }
+
+  .tooltip {
+  display: none;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+
+  &:hover .tooltip {
+    display: block;
+  }
+
+  .chip-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   
       .delete-chip {
         background: none;
         border: none;
         color: $icon-color;
-        font-size: 8.5px;
+        font-size: 9px;
         font-weight: bold;
         cursor: pointer;
         margin-left: 8px;

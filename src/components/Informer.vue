@@ -1,5 +1,6 @@
 
 <template>
+  <h1>Informer</h1>
   <div :class="['informer-container', theme]">
     <button class="ThemeToggle" @click="toggleTheme">
       {{ theme === 'dark' ? 'Light' : 'Dark' }}
@@ -41,7 +42,7 @@ const toggleTheme = () => {
 
 .informer-container {
   padding: 16px;
-  margin: 0 auto;
+  margin: 16px;
   display: flex; 
   border-radius:8px;
   flex-direction: column; 
@@ -95,11 +96,6 @@ const toggleTheme = () => {
   height: 30px;
   }
   
-
-  
-
-
- 
   &.success {
     background-color: #e0fde7;
     color: #2a9b44;
