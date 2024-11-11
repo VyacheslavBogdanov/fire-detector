@@ -1,42 +1,42 @@
 <template>
-    <h1>RadioButton Фильтр</h1>
-    <div class="filter-container" ref="filterContainer">
-      <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
-      <input
-        readonly
-        type="text"
-        v-model="displayText"
-        @focus="isDropdownVisible = true"
-        :class="{ 'filter-input': true, 'has-dropdown': isDropdownVisible }"
-      />
-      <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown': !isDropdownVisible }">⌃</div>
-      <div
-        v-if="isDropdownVisible"
-        class="dropdown"
-        @mousedown="handleDropdownClick"
-      >
-        <div class="search-wrapper" v-if="showSearch">
-          <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" @focus="isDropdownVisible = true" />
-          <span class="searchicon"></span>
-        </div>
-        <ul class="dropdown-list">
-          <li v-if="!noResultsFound">
-            <label>
-              <input type="radio" name="items" v-model="selectedItem" :value="null" />
-              <span>Не выбрано</span>
-            </label>
-          </li>
-          <li v-for="(item, index) in itemsToDisplay" :key="index">
-            <label>
-              <input type="radio" name="items" v-model="selectedItem" :value="item" />
-              <span v-html="highlightMatch(item)"></span>
-            </label>
-          </li>
-        </ul>
-        <div v-if="noResultsFound" class="no-results">Результаты не найдены</div>
+  <h1>RadioButton Фильтр</h1>
+  <div class="filter-container" ref="filterContainer">
+    <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
+    <input
+      readonly
+      type="text"
+      v-model="displayText"
+      @focus="showFullList"
+      :class="{ 'filter-input': true, 'has-dropdown': isDropdownVisible }"
+    />
+    <div :class="{ 'iconPositionTop': isDropdownVisible, 'iconPositionDown': !isDropdownVisible }">⌃</div>
+    <div
+      v-if="isDropdownVisible"
+      class="dropdown"
+      @mousedown="handleDropdownClick"
+    >
+      <div class="search-wrapper" v-if="showSearch">
+        <input class="search" type="text" v-model="searchQuery" placeholder="Поиск" @focus="isDropdownVisible = true" />
+        <span class="searchicon"></span>
       </div>
+      <ul class="dropdown-list">
+        <li v-if="!noResultsFound">
+          <label>
+            <input type="radio" name="items" v-model="selectedItem" :value="null" />
+            <span>Не выбрано</span>
+          </label>
+        </li>
+        <li v-for="(item, index) in itemsToDisplay" :key="index">
+          <label>
+            <input type="radio" name="items" v-model="selectedItem" :value="item" />
+            <span v-html="highlightMatch(item)"></span>
+          </label>
+        </li>
+      </ul>
+      <div v-if="noResultsFound" class="no-results">Результаты не найдены</div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
@@ -54,27 +54,13 @@ function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (.
 const isDropdownVisible = ref<boolean>(false);
 const searchQuery = ref<string>('');
 const selectedItem = ref<string | null>(null);
-const items = ref<string[]>(["Иванов", "Петров", "Сидоров", "Кузнецов", "Смирнов",
-  "Попов", "Васильев", "Михайлов", "Новиков", "Федоров",
-  "Кравцов", "Никитин", "Соловьев", "Лебедев", "Семенов",
-  "Егоров", "Павлов", "Козлов", "Волков", "Зайцев",
-  "Калинин", "Александров", "Сергеев", "Марков", "Коновалов",
-  "Макаров", "Андреев", "Ковалев", "Ильин", "Гусев",
+const items = ref<string[]>([ "Андреев", "Ковалев", "Ильин", "Гусев",
   "Титов", "Кузьмин", "Захаров", "Орлов", "Виноградов",
   "Курочкин", "Яковлев", "Голубев", "Баранов", "Максимов",
-  "Кабанов", "Фролов", "Осипов", "Мясников", "Кириллов",
-  "Маклаков", "Лазарев", "Мельников", "Ершов", "Николаев",
-  "Кочетов", "Зимин", "Савельев", "Миронов", "Князев",
-  "Петровский", "Беляев", "Тарасов", "Борисов", "Никифоров",
-  "Романов", "Логинов", "Померанцев", "Гончаров", "Евдокимов",
-  "Климов", "Камалетдинов", "Фомичев", "Богданов", "Васильев",
-  "Устинов", "Лыткин", "Демьянов", "Морозов", "Герасимов",
-  "Терентьев", "Беспалов", "Фомин", "Давыдов", "Рябов",
-  "Гришин", "Горшков", "Заикин", "Платонов", "Гаврилов",
-  "Голованов", "Емельянов", "Карпов", "Сазонов", "Авдеев",
-  "Суханов", "Котов", "Жуков", "Медведев", "Токарев"
+  "Кабанов", "Фролов", "Осипов",
 ].sort());
-const filteredList = ref<string[]>(items.value);
+
+const filteredList = ref<string[]>([...items.value]);
 const noResultsFound = ref<boolean>(false);
 
 const updateFilteredList = debounce(() => {
@@ -83,15 +69,12 @@ const updateFilteredList = debounce(() => {
   );
   noResultsFound.value = filteredList.value.length === 0;
 
-  
-  if (selectedItem.value && !filteredList.value.includes(selectedItem.value)) {
+  if (!filteredList.value.includes(selectedItem.value as string)) {
     selectedItem.value = null; 
   }
-}, 700);
+}, 300);
 
-watch(searchQuery, () => {
-  updateFilteredList();
-});
+watch(searchQuery, updateFilteredList);
 
 const displayText = computed(() => {
   return selectedItem.value !== null ? selectedItem.value : 'Не выбрано';
@@ -125,12 +108,20 @@ const handleDropdownClick = (event: MouseEvent) => {
   }
 };
 
+const showFullList = () => {
+  isDropdownVisible.value = true;
+  filteredList.value = [...items.value];
+  noResultsFound.value = false;
+};
+
 const itemsToDisplay = computed(() => {
   return filteredList.value;
 });
 
 const showSearch = computed(() => items.value.length > 10);
+
 </script>
+
 
 <style lang="scss" scoped>
 

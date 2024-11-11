@@ -6,6 +6,7 @@
     <CheckboxFilter />
     <RadioButtonFilter />
     <Chips />
+    <!-- <ChipsFilter /> -->
     <Informer />
   </div>
 </template>
@@ -19,6 +20,7 @@ import CheckboxFilter from './components/CheckboxFilter.vue';
 import RadioButtonFilter from './components/RadioButtonFilter.vue';
 import Chips from './components/Chips.vue';
 import Informer from './components/Informer.vue';
+import ChipsFilter from './components/ChipsFilter.vue';
 
 </script>
 

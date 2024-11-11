@@ -1,5 +1,5 @@
 <template>
-    <h1>Chips</h1>
+    <h1>ChipsFilter</h1>
     <div class="filter-container" ref="filterContainer">
       <label :class="{ 'filter-label': true, 'active': isDropdownVisible }">Исполнитель</label>
       <input
@@ -37,9 +37,8 @@
       </div>
     </div>
     <div v-if="!isDropdownVisible" class="chips-container">
-      <div v-for="(chip, index) in checkedItems" :key="index" class="chip" @mouseenter="showTooltip(chip, $event)" @mousemove="moveTooltip($event)" @mouseleave="hideTooltip">
+      <div v-for="(chip, index) in checkedItems" :key="index" :class="{ 'chip': true, 'active-chip': activeChip }" @mouseenter="showTooltip(chip, $event)" @mousemove="moveTooltip($event)" @mouseleave="hideTooltip" @click="toggleChipFilter(index, $event)">
         <span class="chip-content">{{ chip }}</span>
-        <button class="delete-chip" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
       </div>
       <span v-if="tooltipText" :style="tooltipStyle" class="tooltip">{{ tooltipText }}</span>
     </div>
@@ -59,6 +58,7 @@
     };
   }
   
+  const activeChip = ref<number | null>(null);
   const tooltipText = ref<string | null>(null);
   const tooltipStyle = ref<Record<string, string>>({});
   const isDropdownVisible = ref<boolean>(false);
@@ -76,6 +76,12 @@
   ].sort());
   const noResultsFound = ref<boolean>(false);
   const filteredList = ref<string[]>(items.value);
+
+  const toggleChipFilter = (index: number, { target }: Event) => {
+    // activeChip = activeChip === index ? null : index
+    console.log('target', target);
+    
+  }
 
   const showTooltip = (chip: string, event: MouseEvent) => {
   if (chip.length > 17) {
@@ -175,10 +181,6 @@ const updateTooltipPosition = (event: MouseEvent) => {
   
   const showSearch = computed(() => items.value.length > 10);
   
-  const removeChip = (chip: string) => {
-    checkedItems.value = checkedItems.value.filter(item => item !== chip);
-    updateDisplayText();
-  };
   </script>
 
   <style lang="scss" scoped>
@@ -394,6 +396,8 @@ const updateTooltipPosition = (event: MouseEvent) => {
     gap: 8px;
     margin: 12px 0 0 16px;
 
+   
+
     .chip {
   position: relative;
   display: flex;
@@ -408,7 +412,12 @@ const updateTooltipPosition = (event: MouseEvent) => {
   white-space: nowrap;
   font-size: 16px;
   color: #333;
-  cursor: default;
+  cursor: pointer;
+
+  &.active-chip {
+  background-color: blue;
+  color: white;
+}
 
   &:hover {
     background-color: $chip-hover-bg-color;
@@ -424,27 +433,6 @@ const updateTooltipPosition = (event: MouseEvent) => {
     text-overflow: ellipsis;
   }
   
-      .delete-chip {
-        background: none;
-        border: none;
-        color: $icon-color;
-        font-size: 9px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-left: 8px;
-
-        .delete-chip-icon {
-            height: 14px;
-            width: 14px;
-            border: none;
-            border-radius: 50%;
-            background-color: rgb(88, 85, 85);
-            color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-      }
     }
 
         .tooltip {
