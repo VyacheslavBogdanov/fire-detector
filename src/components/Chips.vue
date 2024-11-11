@@ -420,6 +420,7 @@ const updateTooltipPosition = (event: MouseEvent) => {
   }
 
   .chip-content {
+    user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
   }

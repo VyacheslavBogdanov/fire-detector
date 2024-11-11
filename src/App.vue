@@ -6,7 +6,7 @@
     <CheckboxFilter />
     <RadioButtonFilter />
     <Chips />
-    <!-- <ChipsFilter /> -->
+    <ChipsFilter />
     <Informer />
   </div>
 </template>

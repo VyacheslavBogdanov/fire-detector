@@ -37,13 +37,20 @@
       </div>
     </div>
     <div v-if="!isDropdownVisible" class="chips-container">
-      <div v-for="(chip, index) in checkedItems" :key="index" :class="{ 'chip': true, 'active-chip': activeChip }" @mouseenter="showTooltip(chip, $event)" @mousemove="moveTooltip($event)" @mouseleave="hideTooltip" @click="toggleChipFilter(index, $event)">
+      <div
+        v-for="(chip, index) in checkedItems"
+        :key="index"
+        :class="{ 'chip': true, 'active-chip': activeChipIndices.includes(index) }"
+        @mouseenter="showTooltip(chip, $event)"
+        @mousemove="moveTooltip($event)"
+        @mouseleave="hideTooltip"
+        @click="toggleChipFilter(index)"
+      >
         <span class="chip-content">{{ chip }}</span>
       </div>
       <span v-if="tooltipText" :style="tooltipStyle" class="tooltip">{{ tooltipText }}</span>
     </div>
   </template>
-  
   
   <script setup lang="ts">
   import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
@@ -58,7 +65,7 @@
     };
   }
   
-  const activeChip = ref<number | null>(null);
+  const activeChipIndices = ref<number[]>([]);
   const tooltipText = ref<string | null>(null);
   const tooltipStyle = ref<Record<string, string>>({});
   const isDropdownVisible = ref<boolean>(false);
@@ -76,36 +83,39 @@
   ].sort());
   const noResultsFound = ref<boolean>(false);
   const filteredList = ref<string[]>(items.value);
-
-  const toggleChipFilter = (index: number, { target }: Event) => {
-    // activeChip = activeChip === index ? null : index
-    console.log('target', target);
-    
-  }
-
-  const showTooltip = (chip: string, event: MouseEvent) => {
-  if (chip.length > 17) {
-    tooltipText.value = chip;
-    updateTooltipPosition(event);
-  }
-};
-
-const moveTooltip = (event: MouseEvent) => {
-  if (tooltipText.value) {
-    updateTooltipPosition(event);
-  }
-};
-
-const hideTooltip = () => {
-  tooltipText.value = null;
-};
-
-const updateTooltipPosition = (event: MouseEvent) => {
-  tooltipStyle.value = {
-    left: `${event.pageX + 10}px`,
-    top: `${event.pageY + 10}px`,
+  
+  const toggleChipFilter = (index: number) => {
+    const currentIndex = activeChipIndices.value.indexOf(index);
+    if (currentIndex === -1) {
+      activeChipIndices.value.push(index);
+    } else {
+      activeChipIndices.value.splice(currentIndex, 1);
+    }
   };
-};
+  
+  const showTooltip = (chip: string, event: MouseEvent) => {
+    if (chip.length > 17) {
+      tooltipText.value = chip;
+      updateTooltipPosition(event);
+    }
+  };
+  
+  const moveTooltip = (event: MouseEvent) => {
+    if (tooltipText.value) {
+      updateTooltipPosition(event);
+    }
+  };
+  
+  const hideTooltip = () => {
+    tooltipText.value = null;
+  };
+  
+  const updateTooltipPosition = (event: MouseEvent) => {
+    tooltipStyle.value = {
+      left: `${event.pageX + 10}px`,
+      top: `${event.pageY + 10}px`,
+    };
+  };
   
   const updateFilteredList = debounce(() => {
     filteredList.value = items.value.filter(item =>
@@ -182,7 +192,7 @@ const updateTooltipPosition = (event: MouseEvent) => {
   const showSearch = computed(() => items.value.length > 10);
   
   </script>
-
+  
   <style lang="scss" scoped>
   $height-input: 45px;
   $focus-color: #007bff;
@@ -402,7 +412,7 @@ const updateTooltipPosition = (event: MouseEvent) => {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0 0 0 8px;
+  padding: 0 8px 0 8px;
   height: 23px;
   max-width: 170px;
   background-color: #e0e0e0;
@@ -415,13 +425,9 @@ const updateTooltipPosition = (event: MouseEvent) => {
   cursor: pointer;
 
   &.active-chip {
-  background-color: blue;
-  color: white;
+  background-color: rgba(73, 73, 214, 0.962);
+  color: rgb(224, 211, 211);
 }
-
-  &:hover {
-    background-color: $chip-hover-bg-color;
-  }
 
 
   &:hover .tooltip {
@@ -429,6 +435,7 @@ const updateTooltipPosition = (event: MouseEvent) => {
   }
 
   .chip-content {
+    user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
   }
