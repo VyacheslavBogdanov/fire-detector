@@ -37,9 +37,10 @@
       </div>
     </div>
     <div v-if="!isDropdownVisible" class="chips-container">
-      <div v-for="(chip, index) in checkedItems" :key="index" class="chip" :title="chip.length > 15 ? chip : ''">
+      <div v-for="(chip, index) in checkedItems" :key="index" class="chip">
+       <!-- :title="chip.length > 15 ? chip : ''"> -->
         <span class="chip-content">{{ chip }}</span>
-        <span class="tooltip">{{ chip }}</span>
+        <span v-if="tooltipVisible" class="tooltip">{{ chip }}</span>
         <button class="delete-chip" @click="removeChip(chip)"><div class="delete-chip-icon">✕</div></button>
       </div>
     </div>
@@ -59,6 +60,7 @@
     };
   }
   
+  const tooltipVisible = ref<boolean>(true);
   const isDropdownVisible = ref<boolean>(false);
   const searchQuery = ref<string>('');
   const selectAll = ref<boolean>(false);
@@ -67,7 +69,7 @@
     "1234567890123456789012345", "Ивановвввввввввввввввввввв Д.С.", "Кузнецоввввввввввввввввв Е.М.", "Попов Н.А.", "Лебедев И.П.", "Козлов В.Н.",
     "Новиков А.Д.", "Морозов С.А.", "Петров Е.В.", "Васильев А.С.", "Соколов В.И.", "Михайлов О.В.",
     "Фёдоров Д.Л.", "Орлов И.К.", "Волков А.А.", "Андреев П.С.", "Никитин О.В.", "Захаров А.И.", "Куликов Д.П.",
-    "Александров С.В.", "Дмитриев В.Н.", "Ковалёв Е.М.", "Ситников Л.П.", "Григорьев В.Д.", "Гордеев А.С.", "Антонов И.Н.",
+    "Александровв С.В.", "Дмитриев В.Н.", "Ковалёв Е.М.", "Ситников Л.П.", "Григорьев В.Д.", "Гордеев А.С.", "Антонов И.Н.",
     "Ефимов В.П.", "Тимофеев Д.В.", "Филиппов Е.С.", "Макаров О.А.", "Сидоров В.Д.", "Чернов И.П.", "Савельев Н.В.", "Павлов А.С.",
     "Богданов С.К.", "Мартынов Е.В.", "Воробьёв А.М.", "Антипов Д.А.", "Тарасов В.О.", "Беляев Л.В.", "Комаров И.С.", "Мельников Е.К.",
     "Шевченко С.В.", "Емельянов О.П.", "Князев В.А.", "Белов Е.И.", "Щербаков С.Д.", "Назаров Д.В.", "Кочетов О.С.", "Афанасьев Н.А."
@@ -362,7 +364,7 @@
   .chips-container {
     display: flex;
     flex-wrap: wrap;
-    height: 153px;
+    max-height: 153px;
     width: 600px;
     overflow-y: auto;
     gap: 8px;
