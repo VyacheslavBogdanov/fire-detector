@@ -426,7 +426,7 @@
 
   &.active-chip {
   background-color: rgba(73, 73, 214, 0.962);
-  color: rgb(224, 211, 211);
+  color: rgb(230, 220, 220);
 }
 
 

@@ -25,9 +25,5 @@ import ChipsFilter from './components/ChipsFilter.vue';
 </script>
 
 <style lang="scss" scoped>
-// #app {
-//   display: flex;
-//   flex-direction: row;
-//   align-items: center;
-// }
+
 </style>
